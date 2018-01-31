@@ -1,0 +1,38 @@
+---
+title: "COMPSCIX 415.2 Homework 1"
+author: "Inessa Wu"
+date: "January 31, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#My Github repository for my assignments can be found at this URL: [https://github.com/InessaWu/compscix-415-2-assignments]
+
+library(mdsr)
+library(tidyverse)
+```{r load_packages, warning=FALSE, message=FALSE}
+```
+
+data ("WorldCities")
+
+#23,018 observations
+#10 variables
+#variables such as name, latitude, country
+
+glimpse(WorldCities)
+WorldCities <- head(WorldCities, 200)
+
+
+
+#Extract Country column and show unique values
+country_col <- WorldCities$country
+unique(country_col)
+
+#Extract region column and show unique values
+
+r region_col <- WorldCities$region
+unique(region_col)
+
+#End of assignment 1 and 2
