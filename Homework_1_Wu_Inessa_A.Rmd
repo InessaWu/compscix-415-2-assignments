@@ -10,35 +10,47 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 ####My Github repository for my assignments can be found at this URL: [https://github.com/InessaWu/compscix-415-2-assignments]
 
+```{r }
 library(mdsr)
 library(tidyverse)
+```
 
 ```{r load_packages, warning=FALSE, message=FALSE}
 ```
 
+```{r }
 data ("WorldCities")
+```
+
 
 ####23,018 observations
 ####10 variables
 ####variables such as name, latitude, country
 
+```{r }
 glimpse(WorldCities)
 
 WorldCities <- head(WorldCities, 200)
+```
+
 
 
 ####Extract Country column and show unique values:
+```{r }
 country_col <- WorldCities$country
 
 unique(country_col)
+```
 
 ######"AD" "AE" "AF" "AG" "AI" "AL" "AM" "AO" "AR"
 
 ####Extract region column and show unique values:
 
+```{r }
 region_col <- WorldCities$region
 
 unique(region_col)
+```
 
 ######"Europe/Andorra", "Asia/Dubai", "Asia/Kabul", "America/Antigua", "America/Anguilla",   "Europe/Tirane", Asia/Yerevan", "Africa/Luanda", "America/Argentina/Buenos_Aires", "America/Argentina/Cordoba", "America/Argentina/Salta", "America/Argentina/Tucuman", "America/Argentina/San_Juan"    
 
@@ -46,6 +58,7 @@ unique(region_col)
 
 ####Question 3: extract and show the unique entries from the country column in WorldCities using one line of code and two %>% operators
 
+```{r }
 WorldCities %>% select(country) %>% unique()
 
 WorldCities %>% ggplot(aes(x = population)) + 
@@ -54,12 +67,15 @@ WorldCities %>% ggplot(aes(x = population)) +
 WorldCities %>% ggplot(aes(x = population)) + 
   geom_histogram() + 
   xlab('City Population')
+```
   
 ####QUESTION 4: Make one more histogram of the population and add a new x-label, a new y-label, a new title (use ggtitle('my title')), and change the theme of the plot using theme_bw()
 
+```{r } 
 WorldCities %>% ggplot(aes(x = population)) + 
   geom_histogram(bins = 100) +
   xlab('World City Population') +
   ylab('Count of Cities') +
   ggtitle('Cities by Population Size') +
   theme_bw(base_size = 14, base_family = "")
+```
