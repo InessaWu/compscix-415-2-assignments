@@ -21,7 +21,7 @@ The preview shows you a rendered HTML copy of the contents of the editor. Conseq
 ```{r load_packages, warning=FALSE, message=FALSE}
 library(tidyverse)
 ```
-
+#### Exercises 3.2.4
 ```{r }
 ggplot2::mpg
 ```
@@ -37,13 +37,54 @@ glimpse(mpg)
 ```{r}
 ?mpg
 ```
-
+####3. drv describes how torque is provided to the wheels 
+####4. 
 ```{r}
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = cyl, y = hwy))
 ```
+####5.
 ```{r}
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = class, y = drv))
 ```
-####graph does nto make sense because it does not communicate any insights
+####graph does not make sense because it does not communicate any insights
+
+###Exercises 3.3.1
+####1. Data points are not blue because the manually set aethetic - color - needs to be set outside of aes()
+####2. Categorical variables: model, year, trans, drv, fl, class; Continuous variables: despl, cyl, cty, hwy. Can look at the portion of the dataset by typing glipse(mpg)
+####3. 
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = class, y = hwy), color="blue")
+```
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = class, y = hwy, size=displ))
+```
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = class, y = hwy, shape=drv))
+```
+####Errors or warnings show up when aesthetics are mapped to categorical variables; continuous variable cannot be mapped to shape or other categoricals aesthetics
+#####4.
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = class, y = hwy, color=cty, size=cty))
+
+```
+####mapping the same variable to multiple aesthetics combines and defines the output according t o both aesthetics, in this case color and size
+####5. Stroke aesthetic to modify the width of the border. works with shapes 21-24 - must have fill color and border
+
+```{r}
+ggplot(data=mpg)+
+  geom_point(mapping=aes(x = class, y = hwy, size=hwy), shape=21, fill="red", stroke=1)
+```
+#####6.
+```{r}
+ggplot(data=mpg)+
+  geom_point(mapping=aes(x = class, y = hwy,colour = displ < 5))
+```
+####creates a variable and assigns color to it: in this case is displacemtnt is less than 5, it's orange
+
