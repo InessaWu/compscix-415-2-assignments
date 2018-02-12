@@ -88,3 +88,61 @@ ggplot(data=mpg)+
 ```
 ####creates a variable and assigns color to it: in this case is displacemtnt is less than 5, it's orange
 
+####Exercise 3.5.1
+#####3.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(drv ~ .)
+```
+##### facetted by type of drive in rows
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(. ~ cyl)
+```
+#####Facetted by number of cylinders in columns
+#####4.
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+```
+#####Advantages to using faceting instead of the colour aesthetic - cleaner, better interpretable visual representation of data; many colors may make graphs to cluttered. Disadvantages - does not give you the best relative representation (between the facets). For larger datasets with many facet elements, break them down into separate graphs may produce many graphs that do not fit on the same page and become deifficult to interpret. 
+
+#####5. nrow specifies number of rows the graphic will be presented in; ncol number of columns the graphic will be presented in. 
+#####Other options that control the layout of the individual panels: dir - Direction: either "h" for horizontal, the default, or "v", for vertical; scales - vary the scales of each panel
+#####facet_grid() does not have nrow and ncol argument because it's a matrix of two variables that are specified by user, hence it will be auto-generated.
+```{r}
+?facet_wrap
+```
+####Exercise 3.6.1
+#####1.To draw a line chart use geom_smooth(); a boxplot - geom_boxplot(); a histogram - geom_histogram(); an area chart - geom_area
+#####2. The code will output a two layer graph: data points - dots for hwy vs displacement; data points will differ in color by drv. overlayed on top will be a set of line graphs of displ vs. hwy by drv type; all lines will not have shaded confidence interval
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+#####3. 
+######show.legend = FALSE hides the legend. it was removed prior to give more space to show graphs
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point(show.legend = FALSE) + 
+  geom_smooth(se = FALSE, show.legend = FALSE)
+```
+#####4. se argument shows the confidence interval, default at 95%; can be controlled via level argument
+#####5.Graphs will look the same since they have exaclty the same arguments. First chunk of code outlines arguments for geom_point and geom_smooth under ggplot(). The second chunk of code outlines the same exact arguments in each geom separately
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+```
+```{r}
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy))
+```
+###Exercise 3.7.1
+#####2. stat_summary is the default for geom_pointrange
