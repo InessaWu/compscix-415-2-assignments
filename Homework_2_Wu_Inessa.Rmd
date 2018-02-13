@@ -5,19 +5,7 @@ date: February 6, 2018
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
-
-```{r}
-plot(cars)
-```
-
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
-
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
-
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
 ```{r load_packages, warning=FALSE, message=FALSE}
 library(tidyverse)
 ```
@@ -29,31 +17,31 @@ ggplot2::mpg
 ```{r }
 ggplot(data=mpg)
 ```
-####1. I see just the graphing template, nothing plotted
+#####1. I see just the graphing template, nothing plotted
 ```{r }
 glimpse(mpg)
 ```
-####2. 234 rows (observations); 11 columns (variables); drv is f = front-wheel drive, r = rear wheel drive, 4 = 4wd
+#####2. 234 rows (observations); 11 columns (variables); drv is f = front-wheel drive, r = rear wheel drive, 4 = 4wd
 ```{r}
 ?mpg
 ```
-####3. drv describes how torque is provided to the wheels 
-####4. 
+#####3. drv describes how torque is provided to the wheels 
+#####4. 
 ```{r}
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = cyl, y = hwy))
 ```
-####5.
+#####5.
 ```{r}
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = class, y = drv))
 ```
-####graph does not make sense because it does not communicate any insights
+#####graph does not make sense because it does not communicate any insights
 
 ###Exercises 3.3.1
-####1. Data points are not blue because the manually set aethetic - color - needs to be set outside of aes()
-####2. Categorical variables: model, year, trans, drv, fl, class; Continuous variables: despl, cyl, cty, hwy. Can look at the portion of the dataset by typing glipse(mpg)
-####3. 
+#####1. Data points are not blue because the manually set aethetic - color - needs to be set outside of aes()
+#####2. Categorical variables: model, year, trans, drv, fl, class; Continuous variables: despl, cyl, cty, hwy. Can look at the portion of the dataset by typing glipse(mpg)
+#####3. 
 
 ```{r}
 ggplot(data = mpg) + 
@@ -67,15 +55,15 @@ ggplot(data = mpg) +
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = class, y = hwy, shape=drv))
 ```
-####Errors or warnings show up when aesthetics are mapped to categorical variables; continuous variable cannot be mapped to shape or other categoricals aesthetics
+#####Errors or warnings show up when aesthetics are mapped to categorical variables; continuous variable cannot be mapped to shape or other categoricals aesthetics
 #####4.
 ```{r}
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = class, y = hwy, color=cty, size=cty))
 
 ```
-####mapping the same variable to multiple aesthetics combines and defines the output according t o both aesthetics, in this case color and size
-####5. Stroke aesthetic to modify the width of the border. works with shapes 21-24 - must have fill color and border
+#####mapping the same variable to multiple aesthetics combines and defines the output according t o both aesthetics, in this case color and size
+#####5. Stroke aesthetic to modify the width of the border. works with shapes 21-24 - must have fill color and border
 
 ```{r}
 ggplot(data=mpg)+
@@ -86,9 +74,9 @@ ggplot(data=mpg)+
 ggplot(data=mpg)+
   geom_point(mapping=aes(x = class, y = hwy,colour = displ < 5))
 ```
-####creates a variable and assigns color to it: in this case is displacemtnt is less than 5, it's orange
+#####creates a variable and assigns color to it: in this case is displacemtnt is less than 5, it's orange
 
-####Exercise 3.5.1
+###Exercise 3.5.1
 #####3.
 
 ```{r}
@@ -117,7 +105,7 @@ ggplot(data = mpg) +
 ```{r}
 ?facet_wrap
 ```
-####Exercise 3.6.1
+###Exercise 3.6.1
 #####1.To draw a line chart use geom_smooth(); a boxplot - geom_boxplot(); a histogram - geom_histogram(); an area chart - geom_area
 #####2. The code will output a two layer graph: data points - dots for hwy vs displacement; data points will differ in color by drv. overlayed on top will be a set of line graphs of displ vs. hwy by drv type; all lines will not have shaded confidence interval
 ```{r}
@@ -147,7 +135,7 @@ ggplot() +
 ###Exercise 3.7.1
 #####2. geom_col() - heights of the bars represent values in the data; geom_bar() - makes the height of the bar proportional to the number of cases in each group
 
-####Additional Questions:
+###Additional Questions:
 #####What works? sentance long summarized insights
-#####What doesn’t work? donut chart is difficult to grasp and interpret
-#####What would you have done differently?
+#####What doesn’t work? donut charts are difficult to grasp and interpret. grapho of where data scientists are involved in the cycle has too many panels that are hard to grasp in totality
+#####What would you have done differently? would have used stacked bar to potray data scientists backgrounds instead of differently sized bubbles.
