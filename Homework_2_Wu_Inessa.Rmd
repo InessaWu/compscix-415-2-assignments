@@ -145,4 +145,9 @@ ggplot() +
   geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy))
 ```
 ###Exercise 3.7.1
-#####2. stat_summary is the default for geom_pointrange
+#####2. geom_col() - heights of the bars represent values in the data; geom_bar() - makes the height of the bar proportional to the number of cases in each group
+
+####Additional Questions:
+#####What works? sentance long summarized insights
+#####What doesn’t work? donut chart is difficult to grasp and interpret
+#####What would you have done differently?
