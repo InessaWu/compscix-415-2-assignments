@@ -139,3 +139,42 @@ ggplot() +
 #####What works? sentance long summarized insights
 #####What doesn’t work? donut charts are difficult to grasp and interpret. grapho of where data scientists are involved in the cycle has too many panels that are hard to grasp in totality
 #####What would you have done differently? would have used stacked bar to potray data scientists backgrounds instead of differently sized bubbles.
+###Exercise 3.6.1 #6
+#####Graph 1
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+#####Graph 2
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, line=drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+#####Graph 3
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color=drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+#####Graph 4
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color=drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE, show.legend= FALSE)
+```
+#####Graph 5
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, linetype=drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+#####Graph 6
+#####Graph 3
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color=drv)) + 
+  geom_point()
+```
+###End of Homework 2
