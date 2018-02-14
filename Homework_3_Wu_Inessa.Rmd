@@ -1,0 +1,42 @@
+---
+title: "COMPSCIX 415.2 Homework 3"
+author: Inessa Wu
+date: February 13, 2018
+output: html_notebook
+---
+```{r load_packages, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(nycflights13)
+```
+
+###Exercise 3.8.1
+1. the graph likely  does not plt all the points, can use position=jitter to see all data points
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_point(position="jitter")
+```
+2. Amount and Factor control the  degree of jittering in geom_jitter()
+```{r}
+?jitter
+```
+
+3. geom_jitter() can be used with scatterplots to alleviate overplotting by giving more separations to the points that are plotted in the same space. geom_count() is used to count number of points at each location and maps the count in various size of bubbles. geom_count might be more useful in large data sets since thescatterplot may already be too cluttered. 
+
+4. The default position adjustment for geom_boxplot() is  position = "dodge". 
+
+```{r}
+ggplot(data=mpg)+
+  geom_boxplot(mapping=aes(x=drv, y=hwy))
+```
+
+###Exercise 3.9.1
+
+2. What does labs() modifies axis titles as well as plot titles and subtitles
+
+4. The plot of highway vs city miles per gallon shows there is a direct relationships between city and  hwy mileage performance - higher hwy  mileage corresponds with higher city mileage. 
+coord_fixed()  forces a specified ratio between the physical representation of data units on the axes. It is important for clarity of data  reporesentation so that the output is not misinterpreted. In this case x and y have the same units so fixed scale will give the best potrayal of the relationship between the two. 
+geom_abline() Adds reference lines; helpful for plot evaluation
+
+
+
+
