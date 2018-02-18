@@ -37,6 +37,100 @@ ggplot(data=mpg)+
 coord_fixed()  forces a specified ratio between the physical representation of data units on the axes. It is important for clarity of data  reporesentation so that the output is not misinterpreted. In this case x and y have the same units so fixed scale will give the best potrayal of the relationship between the two. 
 geom_abline() Adds reference lines; helpful for plot evaluation
 
+###Exercise 4.4
+
+1.The code does not work because "my_varıable" is misspelled: ı instead of i
+2. Correct dota to data
+
+```{r}
+library(tidyverse)
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+Correct "fliter" to "filter"
+```{r}
+filter(mpg, cyl == 8)
+```
+ Correct "diamond" to "diamonds"
+```{r}
+filter(diamonds, carat > 3)
+```
+###Exercise 5.2.4
+
+```{r}
+library(tidyverse)
+library(nycflights13)
+```
+
+1. 
+Had an arrival delay of two or more hours
+
+```{r}
+filter(flights, arr_delay>=2)
+```
+Flew to Houston (IAH or HOU)
+```{r}
+filter(flights, dest=="IAH" | dest=="HOU")
+```
+Were operated by United, American, or Delta
+```{r}
+filter(flights, carrier %in% c("UA", "AA", "DL"))
+```
+Departed in summer (July, August, and September)
+
+```{r}
+filter(flights, month %in% c(7, 8, 9))
+```
+
+Arrived more than two hours late, but didn’t leave late
+```{r}
+filter(flights, dep_delay<=0, arr_delay>120)
+```
+Were delayed by at least an hour, but made up over 30 minutes in flight
+```{r}
+filter(flights, dep_delay>=60, (dep_delay-arr_delay)>30)
+```
+Departed between midnight and 6am (inclusive)
+```{r}
+filter(flights, sched_dep_time>=0000, sched_dep_time<=0600)
+```
+
+2. between() filters values within the specified range
+
+Departed between midnight and 6am (inclusive)
+```{r}
+filter(flights, between(sched_dep_time, 0000, 0600))
+```
+3. 8,255 flights have a missing dep_time. Dep_delay, arr_time, arr_delay are slaso missing. These might be cancelled flights. 
+
+```{r}
+(missing_dep_time <- filter(flights, is.na(dep_time)))
+
+```
+
+```{r}
+count(missing_dep_time)
+```
+4. 
+Why is NA ^ 0 not missing? Any value to power if zero is equal to 1, including any unknown value
+Why is NA | TRUE not missing? This is an OR statement which returns TRUE if either of the terms is TRUE, which is correct in this situation
+Why is FALSE & NA not missing? & operator will return TRUE only if both terms are the same. In this case we do not know what NA terms are which is why FALSE is returned
+Can you figure out the general rule? (NA * 0 is a tricky counterexample!). If the operation does not care whether NA is an integer or not, the response will be not missing, It will be missing if the operation can be perfomed on specific variable type only
+
+
+```{r}
+NA^0
+```
+```{r}
+NA|TRUE
+
+```
+```{r}
+FALSE & NA
+
+```
+###Exercise 5.4.1
 
 
 
