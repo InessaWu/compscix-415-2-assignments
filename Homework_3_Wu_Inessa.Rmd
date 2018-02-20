@@ -10,7 +10,7 @@ library(nycflights13)
 ```
 
 ###Exercise 3.8.1
-1. the graph likely  does not plt all the points, can use position=jitter to see all data points
+1. the graph likely  does not plot all the points, can use position=jitter to see all data points
 ```{r}
 ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
   geom_point(position="jitter")
@@ -131,6 +131,29 @@ FALSE & NA
 
 ```
 ###Exercise 5.4.1
+1. Brainstorm as many ways as possible to select dep_time, dep_delay, arr_time, and arr_delay from flights
 
+```{r}
+select(flights, dep_time, dep_delay, arr_time, arr_delay)
+```
+```{r}
+select(flights, dep_time:arr_delay, -(sched_dep_time), -(sched_arr_time))
+```
 
+2. What happens if you include the name of a variable multiple times in a select() call. Nothing, variable listed multiple times shows up only once
+```{r}
+select(flights, dep_time, dep_time)
+```
+
+3. one_of() function aloows you to call a predetermined set of columns instead of explicitly listing out column headers in select() function? Might it be helpful in conjunction with this vector if the same set  of columns will be needed multiple times throughout the code.
+
+```{r}
+(vars <- c("year", "month", "day", "dep_delay", "arr_delay"))
+select(flights, one_of(vars))
+```
+4. Argument in contians () function is case insesitive. this is surpirising given that R is case sensitive in general. Default is case insensitive. To change to case sensitive include ignore.case=FALSE
+
+```{r}
+select(flights, contains("TIME", ignore.case = FALSE))
+```
 
