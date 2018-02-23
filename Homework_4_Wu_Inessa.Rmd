@@ -9,3 +9,226 @@ output: html_document
 library(tidyverse)
 library(nycflights13)
 ```
+
+###Exercise 5.6.7
+
+2.Come up with another approach that will give you the same output as not_cancelled %>% count(dest) 
+
+```{r}
+not_cancelled <- flights %>% 
+  filter(!is.na(dep_delay), !is.na(arr_delay))
+not_cancelled %>% 
+  count(dest)
+```
+```{r}
+not_cancelled <- flights %>% 
+  filter(!is.na(dep_delay), !is.na(arr_delay))
+
+not_cancelled %>% group_by(dest) %>%
+  summarize (n=n())
+```
+Come up with another approach that will give you the same output as not_cancelled %>% count(tailnum, wt = distance) (without using count()).
+
+```{r}
+not_cancelled <- flights %>% 
+  filter(!is.na(dep_delay), !is.na(arr_delay))
+
+not_cancelled %>% count(tailnum, wt = distance)
+```
+```{r}
+not_cancelled <- flights %>% 
+  filter(!is.na(dep_delay), !is.na(arr_delay))
+
+not_cancelled %>% group_by (tailnum) %>%
+  summarize(n = sum(distance))
+```
+
+4. Look at the number of cancelled flights per day. Is there a pattern? Is the proportion of cancelled flights related to the average delay?
+
+I don't see any pattern between the departure date and the number of cancelled flights. There is linear relationship between the number of cancelled flights and the proportion of cancelled flights. Number of cancelled flights increases with the increase in average departure delay.
+
+
+```{r}
+flights_pattern <- flights %>% 
+  unite(dep_date, year, month, day) %>%
+  group_by(dep_date) %>%
+  summarize (cancelled_flights = sum(is.na(dep_delay)), 
+             prop_cancelled = mean(is.na(dep_delay)), 
+             mean_delay = mean (arr_delay, na.rm = TRUE))
+             
+ggplot(data = flights_pattern) +
+         geom_point(mapping = aes(x=dep_date, y=prop_cancelled))
+ggplot(data = flights_pattern) +
+         geom_point(mapping = aes(x=cancelled_flights, y=prop_cancelled))
+ggplot(data = flights_pattern) +
+  geom_point(mapping = aes(x = cancelled_flights, y=mean_delay, color = "red"))
+
+ 
+```
+
+
+5.Which carrier has the worst delays? Among delayed flights OO and YV have the worst departure and arrival delays. However, number of delayed flights for this airlines are the smallest. Among all departure flights it's EV and F9.
+
+Challenge: can you disentangle the effects of bad airports vs. bad carriers? Why/why not? (Hint: think about flights %>% group_by(carrier, dest) %>% summarise(n()))
+
+It's hard to tell. I think logistic regression would be able to produce faster and cleaner answer.
+
+
+
+```{r}
+flights %>%
+  filter(!is.na(dep_delay)& dep_delay>0) %>%
+  group_by(carrier) %>%
+  summarize (avg_delay = (mean(dep_delay)), 
+             n()) %>%
+  arrange(desc(avg_delay))
+```
+
+```{r}
+flights %>%
+  filter(!is.na(arr_delay) & arr_delay>0) %>%
+  group_by(carrier) %>%
+  summarize (avg_arr_delay = (mean(arr_delay)), 
+             n()) %>%
+  arrange(desc(avg_arr_delay)) 
+          
+```
+```{r}
+flights %>%
+  filter(!is.na(arr_delay) & arr_delay>0) %>%
+  group_by(carrier, dest) %>%
+  summarize (avg_arr_delay = (mean(arr_delay)), 
+              n=n()) %>%
+  arrange(desc(n)) %>%
+  filter(avg_arr_delay>40) %>%
+  
+  ggplot()+
+  geom_point(mapping=aes(x=carrier, y=dest, size=avg_arr_delay))
+          
+
+```
+
+6.What does the sort argument to count() do. When might you use it? 
+
+Sort orders the output in descending order of n, if set to TRUE. Can be used to sort output in cases where count is performed by another variable. e.g. count flights, by carrier
+
+###Exercise 10.5 
+
+1.How can you tell if an object is a tibble? (Hint: try printing mtcars, which is a regular data frame).
+
+mtcars is a tibble. print(mtcars) shows only 10 rows and the number of columns that fit on the screen. Under the column names i can see data type
+
+```{r}
+print(mtcars)
+```
+
+2.Compare and contrast the following operations on a data.frame and equivalent tibble. What is different? Why might the default data frame behaviours cause you frustration?
+
+Default data frame can do partial match (df$x) whereas tibble cannot. Both work for second and third expressions. However, data frame returned a vector. With tibbles, [ always returns another tibble.
+
+```{r}
+df <- data.frame(abc = 1, xyz = "a")
+df$x
+df[, "xyz"]
+df[, c("abc", "xyz")]
+```
+
+```{r}
+df <- data.frame(abc = 1, xyz = "a")
+df_tibble <- as_tibble(df)
+df_tibble$x
+df_tibble[, "xyz"]
+df_tibble[, c("abc", "xyz")]
+```
+
+3. If you have the name of a variable stored in an object, e.g. var <- "mpg", how can you extract the reference variable from a tibble? Yes, via [[var]]
+
+```{r}
+var <- "mpg"
+df_tibble[[var]]
+```
+
+
+6.What option controls how many additional column names are printed at the footer of a tibble
+
+set print options with options(tibble.print_max = n, tibble.print_min = m)
+or via command print (n = number of rows, width = number of columns)
+
+###Exerise 12.3.3
+
+2.Why does this code fail?
+table4a %>% 
+  gather(1999, 2000, key = "year", value = "cases")
+  
+It fails because “1999” and “2000” are non-syntactic names - don’t start with a letter- they have to be surrounded by backticks
+
+3. Why does spreading this tibble fail? How could you add a new column to fix the problem?
+
+In this tibble age for Phillip Woods is listed twice. This might be a duplicate. We could add identifier column to distinguish between the two entries.This would produce 3 observations for Phillip. However, since we don't know which age coincides to which height, this the best that could be done without consulting SME.
+
+```{r}
+people <- tribble(
+  ~name,             ~key,    ~value,
+  #-----------------|--------|------
+  "Phillip Woods",   "age",       45,
+  "Phillip Woods",   "height",   186,
+  "Phillip Woods",   "age",       50,
+  "Jessica Cordero", "age",       37,
+  "Jessica Cordero", "height",   156
+)
+
+people <- people %>% unite(identifier, name, value, remove=FALSE)
+print(people)
+
+people_tidy <-  
+  spread(people, key, value)
+print(people_tidy)
+```
+
+4.Tidy the simple tibble below. Do you need to spread or gather it? What are the variables?
+
+this tibble needs to be gathered. Varibles: Pregnant, Sex
+
+```{r}
+preg <- tribble(
+  ~pregnant, ~male, ~female,
+  "yes",     NA,    10,
+  "no",      20,    12
+)
+
+gather(preg, male, female, key="sex", value="value")
+```
+
+###Exercise 12.4.3: #1 and #2 only
+
+1.What do the extra and fill arguments do in separate()? Experiment with the various options for the following two toy datasets.
+
+Extra controls what happens when there are too many pieces - shows a warning on the Console, by default
+FIll controls controls what happens when there are not enough pieces - shows a warning on the Console, by default
+```{r}
+tibble(x = c("a,b,c", "d,e", "f,g,i")) %>% 
+  separate(x, c("one", "two", "three"), extra = "warn", fill = )
+```
+
+
+
+```{r}
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% 
+  separate(x, c("one", "two", "three"), extra = "warn")
+```
+
+2.Both unite() and separate() have a remove argument. What does it do? Why would you set it to FALSE? 
+
+Remove argument removes original data colums that are being united or separated (removes input column from output data frame). Set to FALSE if need to retain original data values.
+
+###Additional Questions
+
+Question 1.
+```{r}
+file_path <- 'C:/Users/ipodvorna/Documents/compscix-415-2-assignments/compscix-415-2-assignments/baby_names.csv'
+baby_names_data <- read_delim(file = file_path, delim = "|")
+```
+```{r}
+glimpse(baby_names_data)
+```
+
