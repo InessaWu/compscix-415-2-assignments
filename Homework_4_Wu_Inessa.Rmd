@@ -116,12 +116,15 @@ Sort orders the output in descending order of n, if set to TRUE. Can be used to 
 
 1.How can you tell if an object is a tibble? (Hint: try printing mtcars, which is a regular data frame).
 
-mtcars is a tibble. print(mtcars) shows only 10 rows and the number of columns that fit on the screen. Under the column names i can see data type
-
+mtcars is a data frame. first column does not have a header and variable type. Converting to tibble, deletes first column.
 ```{r}
 print(mtcars)
-```
 
+```
+```{r}
+mtcars1 <- as_tibble(mtcars) %>% print()
+
+```
 2.Compare and contrast the following operations on a data.frame and equivalent tibble. What is different? Why might the default data frame behaviours cause you frustration?
 
 Default data frame can do partial match (df$x) whereas tibble cannot. Both work for second and third expressions. However, data frame returned a vector. With tibbles, [ always returns another tibble.
@@ -223,12 +226,33 @@ Remove argument removes original data colums that are being united or separated 
 
 ###Additional Questions
 
-Question 1.
+Load baby_names.txt in R:
+
 ```{r}
-file_path <- 'C:/Users/ipodvorna/Documents/compscix-415-2-assignments/compscix-415-2-assignments/baby_names.csv'
+file_path <- 'C:/Users/ipodvorna/Documents/compscix-415-2-assignments/compscix-415-2-assignments/baby_names.txt'
 baby_names_data <- read_delim(file = file_path, delim = "|")
 ```
+Take a glimpse of the output:
+
 ```{r}
 glimpse(baby_names_data)
+```
+```{r}
+file_path_write <- 'C:/Users/ipodvorna/Documents/compscix-415-2-assignments/compscix-415-2-assignments/baby_names.csv'
+write_csv(baby_names_data, path = file_path_write) 
+```
+
+Export this file as an rds file and call it ‘baby_names.rds’:
+
+```{r}
+saveRDS(baby_names_data, file = 'C:/Users/ipodvorna/Documents/compscix-415-2-assignments/compscix-415-2-assignments/baby_names.rds')
+```
+
+Reload the baby_names.rds file and take another glimpse:
+ 
+```{r}
+baby_names_data_R <- readRDS('C:/Users/ipodvorna/Documents/compscix-415-2-assignments/compscix-415-2-assignments/baby_names.rds')
+
+glimpse(baby_names_data_R)
 ```
 
