@@ -2,7 +2,10 @@
 title: "COMPSCIX 415.2 Homework 5/Midterm"
 author: "Inessa Wu"
 date: "February 28, 2018"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
@@ -11,6 +14,95 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r load_packages, warning=FALSE, message=FALSE}
 library(tidyverse)
+library (rmarkdown)
 ```
 
+###The tidyverse Packages
+
+#### Question 1
+
+The following packages are associated with each task below:
+
+Plotting - ggplot2
+Data munging/wrangling - dplyr
+Reshaping (speading and gathering) data - tidyr
+Importing/exporting data - readr
+
+####Question 2
+
+Below are few functions that I’ve used from each of the package listed in Question 1 for the tasks below:
+
+Plotting - ggplot(), geom_point(), aes(), coord_flip() 
+Data munging/wrangling - select(), filter(), mutate(), summarise(), arrange()
+Reshaping data - gather(), spread(), separate(), unite()
+Importing/exporting data (note that readRDS and saveRDS are base R functions) - read_csv(), read_delim()
+
+###R Basics
+
+####Question 1
+
+This code:
+My_data.name___is.too00ooLong! <- c( 1 , 2   , 3 )
+should be fixed by removing the exclamation sign, as follows:
+
+```{r}
+My_data.name___is.too00ooLong <- c( 1 , 2   , 3 )
+My_data.name___is.too00ooLong
+```
+
+####Question 2
+
+This code:
+my_string <- C('has', 'an', 'error', 'in', 'it)
+should be fixed by changing "C"" to lower case "c" and adding ' after it, as follows:
+
+```{r}
+my_string <- c('has', 'an', 'error', 'in', 'it')
+my_string
+```
+
+####Question 3
+
+Code below outputs character/string data type, not integers data type
+
+```{r}
+my_vector <- c(1, 2, '3', '4', 5)
+my_vector
+```
+
+###Data Import/Export
+
+###Question 1
+
+Downloading the rail_trail.txt file from Canvas (in the Midterm Exam section here) and importing it into R. 
+
+```{r}
+file_path <- 'C:/Users/ipodvorna/Documents/compscix-415-2-assignments/compscix-415-2-assignments/rail_trail.txt'
+rail_trail_data <- read_delim(file = file_path, delim = "|")
+```
+Taking a glimpse at the imported rail_trail_data file
+
+```{r}
+glimpse(rail_trail_data)
+```
+
+####Question 2
+
+Exporting the file into an R-specific format: 
+
+```{r}
+saveRDS(rail_trail_data, file = 'C:/Users/ipodvorna/Documents/compscix-415-2-assignments/compscix-415-2-assignments/rail_trail.rds')
+```
+
+Reload rail_trail.rds file.
+
+```{r}
+rail_trail_data_R <- readRDS('C:/Users/ipodvorna/Documents/compscix-415-2-assignments/compscix-415-2-assignments/rail_trail.rds')
+```
+
+Taking a glimpse
+
+```{r}
+glimpse(rail_trail_data_R)
+```
 
