@@ -106,3 +106,30 @@ Taking a glimpse
 glimpse(rail_trail_data_R)
 ```
 
+###Visualization
+
+####Question 1.
+
+The following things are wrong with the graph:
+
+1. For each category of the graph, percentage of respondents shown answering "yes" or "no" do not add up to 100%, e.g. for "under 45" category answering "yes" or "no" adds up to 95%. The same problem exists across all shown categories
+
+2. The relative sizes of the bubbles are not of the same scale with smaller values specifically made to apper smaller than they shoudl have been
+
+3. Chart does not show how large each of the age categories are relative to each other or as % of 100% which makes it difficult to interpret correctly. May be all women were under 45 and men where mostly over 45 years old..
+
+####Question 2
+
+Reproducing graphic using the diamonds data set:
+
+```{r}
+ggplot(data=diamonds)+
+  geom_boxplot(mapping = aes(x=(reorder(cut,-carat, FUN=mean)), y=carat, fill=color), position="identity")+
+  labs(x="CUT OF DIAMOND", y="CARAT OF DIAMOND")+
+  coord_flip()
+```
+
+####Question 3.
+
+The previous graphic is not very useful. We can make it much more useful by changing one thing about it. Make the change and plot it again.
+
