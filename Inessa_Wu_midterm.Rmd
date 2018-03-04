@@ -19,7 +19,7 @@ library (rmarkdown)
 
 ###The tidyverse Packages
 
-#### Question 1
+####Question 1
 
 The following packages are associated with each task below:
 
@@ -72,7 +72,7 @@ my_vector
 
 ###Data Import/Export
 
-###Question 1
+####Question 1
 
 Downloading the rail_trail.txt file from Canvas (in the Midterm Exam section here) and importing it into R. 
 
@@ -129,7 +129,139 @@ ggplot(data=diamonds)+
   coord_flip()
 ```
 
-####Question 3.
+####Question 3
 
-The previous graphic is not very useful. We can make it much more useful by changing one thing about it. Make the change and plot it again.
+By chaging position to "dodge", graph now shows separate box plots for each color of diamond within each cut category instead oflayering them
+
+```{r}
+ggplot(data=diamonds)+
+  geom_boxplot(mapping = aes(x=(reorder(cut,-carat, FUN=mean)), y=carat, fill=color), position="dodge")+
+  labs(x="CUT OF DIAMOND", y="CARAT OF DIAMOND")+
+  coord_flip()
+```
+
+###Data munging and wrangling
+
+####Question 1
+
+table2 dataset is not tidy.It contains "cases" and "population" variables combined in the same column under "type" header. The data set needs to be spread to seprate "cases" and "population" variables.
+
+```{r}
+table2_tidy <-  
+  spread(table2, type, count)
+
+print(table2_tidy)
+```
+
+####Question 2
+
+Creating a new column in the diamonds data set called price_per_carat that shows the price of each diamond per carat. Only code is shown, not the output
+
+```{r include=FALSE}
+mutate(diamonds, price_per_carat=price/carat)
+```
+
+####Question 3
+
+Code for getting number of diamonds, and the applicable proportion with price > 10000 and a carat < 1.5
+
+```{r}
+diamonds %>% summarise(number_of_diamonds = sum(price > 10000 & carat < 1.5),
+            prop_diamonds = mean(price > 10000 & carat < 1.5))
+  
+```
+
+The results make sense, there is onlu 1.5% of diamonds that are very high priced (greater than $10K) while under 1.5 carats in size. The output does reveal why this might be happening. This is mostl likely driven by the quality of the diamonds such as color, cut, and calrity
+
+
+###EDA
+
+####Question 1
+
+txhousing data set covers data from January 2000 to July 2015
+
+```{r}
+txhousing %>%
+  unite(year_month, year, month) %>%
+  summarize (min(year_month), max(year_month), min(date), max(date))
+
+```
+
+####Question 2
+
+txhousing dataset has 46 cities represented
+
+```{r}
+txhousing %>%
+  summarise( count_dist=n_distinct(city))
+        
+```
+
+####Question 3
+
+Houston in July of 2015 had the highest number of sales
+
+```{r}
+txhousing %>% 
+  unite(year_month, year, month) %>%
+  group_by(city, year_month) %>%
+    summarize (number_sales = sum(sales)) %>%
+  arrange(desc(number_sales))
+
+```
+
+####Question 4
+
+There is a linear relationships between sales and listings (values are correlated) - Sales increase with the increase in number of listings.
+
+```{r}
+txhousing %>% ggplot()+
+geom_point (mapping=aes(x=listings, y=sales))
+```
+
+```{r}
+txhousing %>% 
+  ggplot()+
+  geom_bin2d(mapping=aes(x=listings, y=sales))
+```
+
+####Question 5
+
+Sales are missing for 568 records (6.6%). Detail by city is shown below with South Padre Island having the largest number proportion of sales records missing at 62%
+
+```{r}
+txhousing %>% 
+  summarize (sales_missing = sum(is.na(sales)), 
+             prop_missing = mean(is.na(sales)))
+```
+
+
+```{r}
+txhousing %>% 
+  group_by(city) %>%
+  summarize (sales_missing = sum(is.na(sales)), 
+             prop_missing = mean(is.na(sales))) %>%
+  arrange (desc(prop_missing))
+```
+
+####Question 6
+
+Distribution of the median sales price when grouped by city differ, as shown on the boxplot below. City with large number of outliers, such as Dallas, Houston, and COllin County would warrant more investigation. 
+
+Filter of greater than 500 sales is useful to cut the noise and be able to clearly look at and interpret the results.
+
+```{r}
+txhousing %>% 
+  unite(year_month, year, month, remove=FALSE) %>%
+  group_by(year_month) %>%
+  filter (sales > 500) %>%
+ 
+  ggplot()+
+  geom_boxplot(mapping=aes(x=reorder(city, median, FUN=median.default), y=median))+
+  labs(x="City")+
+  coord_flip()
+```
+
+
+
 
