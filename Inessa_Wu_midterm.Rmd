@@ -8,6 +8,10 @@ output:
     toc_float: true
 ---
 
+
+####GitHub repository: https://github.com/InessaWu/compscix-415-2-assignments
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
