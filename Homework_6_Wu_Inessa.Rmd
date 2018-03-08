@@ -1,0 +1,22 @@
+---
+title: "COMPSCIX 415.2 Homework 6"
+author: "Inessa Wu"
+date: "March 7, 2018"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load_packages, warning=FALSE, message=FALSE}
+library (tidyverse)
+library (rmarkdown)
+library (mosaicData)
+library (lubridate)
+```
+
+
