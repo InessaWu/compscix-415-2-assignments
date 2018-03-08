@@ -19,4 +19,133 @@ library (mosaicData)
 library (lubridate)
 ```
 
+###Exercise 1
+
+```{r}
+data(Whickham)
+```
+
+Variables included in the data set are Outcome (Alive, Dead), Smoker (No, Yes), Age (age in years). 
+
+There are 1,314 observations in this data set. Each observation represents a woman who took a survey.
+
+The summary table shows that higher share of non-smokers are dead 20 years after the initial survey has been taken. This outcome does not make sense. Age has to be a factor. It's possible that larger share of non-smokers were older than that of smokers.
+
+```{r}
+Whickham %>% count(smoker, outcome)
+
+ggplot(data=Whickham)+
+  geom_bar(mapping=aes(x=smoker, fill=outcome), position="fill")
+```
+Creating a new variable age_ctg to categorize survey responders into age groups. Checking that this step has been completed correctly.
+
+```{r}
+whicham_wkng <- Whickham %>% mutate (age_ctg = case_when(age <= 44 ~ 'age <= 44', age > 44 & age <=64 ~ 'age > 44 & age <= 64', age > 64 ~ 'age > 64'))
+
+glimpse(whicham_wkng)
+```
+Converting age_ctg into orgered factor and assigning values to age_fct variable and creating a visualization. Checking that this step has been completed correctly.
+
+```{r}
+whicham_wkng <- whicham_wkng %>% mutate (age_fct = factor(age_ctg, ordered=TRUE))
+
+glimpse(whicham_wkng)
+
+ggplot(data = whicham_wkng)+
+  geom_bar(mapping=aes(x=smoker, fill=outcome), position='fill')+
+  facet_grid(~age_fct)
+```
+
+Visualiziation above makes more sense. By exposing age category, now the visualization shows that a larger share of non-smokers remained alive 20 years after the survey for each age category. It also shows that share of women dead increased with age for both smokers and non-smokers.
+
+
+###Exercise 2
+
+####Question 1
+
+Generating a random sample of size n = 10000 from a gamma(1,2) distribution and plotting a histogram or density curve
+
+```{r}
+n <- 10000
+
+gamma_samp <- tibble(x = rgamma(n, shape = 1, scale = 2))
+
+ggplot(gamma_samp)+
+  geom_histogram(mapping=aes(x=x))
+
+```
+
+####Question 2
+Mean of the generated sample is 1.981001 and standard deviaion is 1.973010 
+
+```{r}
+gamma_samp %>% summarize(mean_x = mean(x, na.rm = TRUE),
+                      sd_x = sd(x, na.rm = TRUE)) %>%
+  gather(key = stats, value = values)
+```
+
+####Question 3
+
+Taking a sample of size n = 30 from a Gamma(1,2) distribution and then plotting the histogram. Mean and standard deviation of the generated sample are shown below:
+
+```{r}
+gamma_n30 <- gamma_samp %>% sample_n(30)
+
+gamma_n30 %>%
+  summarize(mean_x = mean(x, na.rm = TRUE),
+                      sd_x = sd(x, na.rm = TRUE)) %>%
+  gather(key = stats, value = values)
+
+ggplot(gamma_n30)+
+  geom_histogram(mapping=aes(x=x))
+```
+
+####Question 4
+
+Creating a vector mean_samp that contains values of sample means for 1000 repetitions of taking a sample of size n = 30 from the Gamma(1,2) distribution and calculating sample mean.
+
+```{r}
+# create a vector with 10000 NAs
+
+mean_samp <- rep(NA, 10000)
+
+# start a loop
+for(i in 1:10000) {
+  g_samp <- rgamma(30, shape = 1, scale = 2)
+  mean_samp[i] <- mean(g_samp)
+}
+# Convert vector to a tibble
+mean_samp <- tibble(mean_samp)
+
+```
+
+#####Question 5
+
+Below is a histogram of the generated collection of means from (mean_samp)
+
+```{r}
+ggplot(mean_samp)+
+  geom_histogram(mapping=aes(x=mean_samp))
+```
+
+####Question 6
+
+Calculate the mean and standard deviation of all of your sample means.
+
+
+```{r}
+mean_samp %>%
+  summarize(mean_smpl = mean(mean_samp, na.rm = TRUE),
+                      sd_smpl = sd(mean_samp, na.rm = TRUE)) %>%
+  gather(key = stats, value = values)
+```
+
+####Question 7
+
+None of he values are surprising. Both values are in line with the expectations based on Central Limit Theorem. Mean is close to 2, as expectged and standard deviation is close to 0.365. 
+
+####Question  8
+According to the Central Limit Theorem, the mean of your sampling distribution should be very close to 2, and the standard deviation of your sampling distribution should be close to σn−−√=230−−√=0.365. Repeat #4-#6, but now with a sample of size n = 300 instead. Do your results match up well with the theorem?
+
+
 
