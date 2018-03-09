@@ -5,6 +5,7 @@ date: "March 7, 2018"
 output: 
   html_document:
     toc: true
+    toc_depth: 4
     toc_float: true
 ---
 
@@ -25,9 +26,15 @@ library (lubridate)
 data(Whickham)
 ```
 
+####Question 1
+
 Variables included in the data set are Outcome (Alive, Dead), Smoker (No, Yes), Age (age in years). 
 
+####Question 2
+
 There are 1,314 observations in this data set. Each observation represents a woman who took a survey.
+
+####Question 3
 
 The summary table shows that higher share of non-smokers are dead 20 years after the initial survey has been taken. This outcome does not make sense. Age has to be a factor. It's possible that larger share of non-smokers were older than that of smokers.
 
@@ -37,6 +44,9 @@ Whickham %>% count(smoker, outcome)
 ggplot(data=Whickham)+
   geom_bar(mapping=aes(x=smoker, fill=outcome), position="fill")
 ```
+
+####Question 4
+
 Creating a new variable age_ctg to categorize survey responders into age groups. Checking that this step has been completed correctly.
 
 ```{r}
@@ -130,7 +140,7 @@ ggplot(mean_samp)+
 
 ####Question 6
 
-Calculate the mean and standard deviation of all of your sample means.
+Calculate the mean and standard deviation of all sample means.
 
 
 ```{r}
@@ -145,7 +155,33 @@ mean_samp %>%
 None of he values are surprising. Both values are in line with the expectations based on Central Limit Theorem. Mean is close to 2, as expectged and standard deviation is close to 0.365. 
 
 ####Question  8
-According to the Central Limit Theorem, the mean of your sampling distribution should be very close to 2, and the standard deviation of your sampling distribution should be close to σn−−√=230−−√=0.365. Repeat #4-#6, but now with a sample of size n = 300 instead. Do your results match up well with the theorem?
+Repeating sampling with n=300
+
+```{r}
+# create a vector with 300 NAs
+
+mean_samp300 <- rep(NA, 300)
+
+# start a loop
+for(i in 1:300) {
+  g_samp300 <- rgamma(30, shape = 1, scale = 2)
+  mean_samp300[i] <- mean(g_samp300)
+}
+# Convert vector to a tibble
+mean_samp300 <- tibble(mean_samp300)
+
+```
+
+Calculating the mean and standard deviation of all sample means from a sample of n=300
+
+```{r}
+mean_samp300 %>%
+  summarize(mean_smpl300 = mean(mean_samp300, na.rm = TRUE),
+                      sd_smpl300 = sd(mean_samp300, na.rm = TRUE)) %>%
+  gather(key = stats, value = values)
+```
+
+Repeating sampling process and with a sample size of n = 300 produced results that still match up fairly well with the theorem: mean of 2.0465739 which is close to 2 and standard deviation of 0.3892461 which is fairly close to 0.365. However, both mean and standard deviation from the sample of n=300 have values that a little further away from the Central Limit Theorem expected values that those resulting from a sample of n=10000 
 
 
 
