@@ -35,7 +35,7 @@ Importing/exporting data - readr
 ####Question 2
 
 Below are few functions that I’ve used from each of the package listed in Question 1 for the tasks below:
-
+ 
 Plotting - ggplot(), geom_point(), aes(), coord_flip() 
 Data munging/wrangling - select(), filter(), mutate(), summarise(), arrange()
 Reshaping data - gather(), spread(), separate(), unite()
