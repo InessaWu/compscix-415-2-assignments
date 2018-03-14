@@ -1,0 +1,56 @@
+---
+title: "COMPSCIX 415.2 Homework 7"
+author: "Inessa Wu"
+date: "March 13, 2018"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 4
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load_packages, warning=FALSE, message=FALSE}
+library (tidyverse)
+library (rmarkdown)
+library (mosaicData)
+library (lubridate)
+library(broom)
+```
+
+###Exercise 1
+
+Loading train.csv data set. Datset contains 1460 observations and 81 variables (columns)
+
+```{r message=FALSE}
+file_path <- 'C:/Users/ipodvorna/Documents/compscix-415-2-assignments/compscix-415-2-assignments/train.csv'
+housing_train_data <- read_delim(file = file_path, delim = ",")
+```
+
+###Exercise 2
+
+Splitting data into training and test data sets (70/30)
+
+```{r}
+# When taking a random sample, it is often useful to set a seed so that
+# your work is reproducible. Setting a seed will guarantee that the same
+# random sample will be generated every time, so long as you always set the
+# same seed beforehand
+
+set.seed(29283)
+
+# This data already has an Id column which we can make use of.
+# Let's create our training set using sample_frac. Fill in the blank.
+train_set <- housing_train_data %>% sample_frac(.7)
+
+# let's create our testing set using the Id column. Fill in the blanks.
+test_set <- housing_train_data %>% filter(!(Id %in% train_set$Id))
+```
+
+
+
+
+
