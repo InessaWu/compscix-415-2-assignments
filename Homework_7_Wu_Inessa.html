@@ -238,19 +238,34 @@ housing_train_data &lt;- read_delim(file = file_path, delim = &quot;,&quot;)</co
 <div id="exercise-2" class="section level3">
 <h3>Exercise 2</h3>
 <p>Splitting data into training and test data sets (70/30)</p>
-<pre class="r"><code># When taking a random sample, it is often useful to set a seed so that
-# your work is reproducible. Setting a seed will guarantee that the same
-# random sample will be generated every time, so long as you always set the
-# same seed beforehand
+<pre class="r"><code># Setting a seed to guarantee that the same random sample is
+# generated every time, so long as the same seed is set beforehand
 
 set.seed(29283)
 
-# This data already has an Id column which we can make use of.
-# Let's create our training set using sample_frac. Fill in the blank.
+# Creating training data set - 70% of data
 train_set &lt;- housing_train_data %&gt;% sample_frac(.7)
 
-# let's create our testing set using the Id column. Fill in the blanks.
+# Assigning the remaining 30% of data to testing data set
 test_set &lt;- housing_train_data %&gt;% filter(!(Id %in% train_set$Id))</code></pre>
+</div>
+<div id="exercise-3" class="section level3">
+<h3>Exercise 3</h3>
+<pre class="r"><code># Fit a model with intercept only
+mod_0 &lt;- lm(SalePrice ~ 1, data = train_set)
+
+# The average SalePrice is equal to our model's coefficient at $182,176
+mean(train_set$SalePrice)</code></pre>
+<pre><code>## [1] 182176</code></pre>
+<pre class="r"><code>tidy(mod_0)</code></pre>
+<pre><code>##          term estimate std.error statistic p.value
+## 1 (Intercept)   182176  2492.072  73.10222       0</code></pre>
+<pre class="r"><code># R-squared is 0
+glance(mod_0)</code></pre>
+<pre><code>##   r.squared adj.r.squared    sigma statistic p.value df    logLik      AIC
+## 1         0             0 79668.37        NA      NA  1 -12983.57 25971.13
+##        BIC     deviance df.residual
+## 1 25980.99 6.480338e+12        1021</code></pre>
 </div>
 
 

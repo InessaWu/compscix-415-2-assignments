@@ -35,22 +35,84 @@ housing_train_data <- read_delim(file = file_path, delim = ",")
 Splitting data into training and test data sets (70/30)
 
 ```{r}
-# When taking a random sample, it is often useful to set a seed so that
-# your work is reproducible. Setting a seed will guarantee that the same
-# random sample will be generated every time, so long as you always set the
-# same seed beforehand
+# Setting a seed to guarantee that the same random sample is
+# generated every time, so long as the same seed is set beforehand
 
 set.seed(29283)
 
-# This data already has an Id column which we can make use of.
-# Let's create our training set using sample_frac. Fill in the blank.
+# Creating training data set - 70% of data
 train_set <- housing_train_data %>% sample_frac(.7)
 
-# let's create our testing set using the Id column. Fill in the blanks.
+# Assigning the remaining 30% of data to testing data set
 test_set <- housing_train_data %>% filter(!(Id %in% train_set$Id))
 ```
 
+###Exercise 3
 
+
+```{r}
+# Fit a model with intercept only
+mod_0 <- lm(SalePrice ~ 1, data = train_set)
+
+# The average SalePrice is equal to our model's coefficient at $182,176
+mean(train_set$SalePrice)
+tidy(mod_0)
+
+# R-squared is 0
+glance(mod_0)
+```
+
+###Exercise 4
+
+Before fitting the model:
+
+1. What kind of relationship will these features have with our target? 
+
+Neighborhood: Physical locations within Ames city limits
+GrLivArea: Above grade (ground) living area square feet
+OverallQual: Overall material and finish quality
+
+I expect GrLivArea and OverallQual to be directly correlated with the sales price. Neighborhood could be either directly or inversly correlated with the sales price, depending on the how good the neigborhood is perceived to be.
+
+2. Can the relationship be estimated linearly?
+
+Based on plots below, a linear realtionship could be estimated between sales price and GrLivArea as well as sales price and OverallQual
+
+```{r}
+# Plot relationship between sales price and GrLivArea
+
+ggplot(data=train_set)+
+  geom_point(mapping = aes(x=GrLivArea, y=SalePrice, color=Neighborhood))
+```
+
+
+```{r}
+# Plot relationship between sales price and OverallQual
+
+ggplot(data=train_set)+
+  geom_point(mapping = aes(x=OverallQual, y=SalePrice, color=Neighborhood))
+```
+
+```{r}
+# Plot relationship between sales price and OverallQual
+
+ggplot(data=train_set)+
+  geom_point(mapping = aes(x=Neighborhood, y=SalePrice))+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+need to order
+
+```{r}
+#Fit a regression model using GrLivArea, OverallQual, and Neighborhood as the features
+mod_train_regr <- lm(SalePrice ~ GrLivArea + OverallQual + Neighborhood, data = train_set)
+
+# Output coefficients
+tidy(mod_train_regr)
+
+# Output R-squared
+glance(mod_train_regr)
+```
 
 
 
