@@ -37,6 +37,15 @@ titanic_data <- read_delim(file = file_path, delim = ",")
 glimpse(titanic_data)
 ```
 
+```{r}
+#Converst Survived to factor
+
+titanic_data <- titanic_data %>% mutate(Survived_fct = factor(Survived)) %>% select(-Survived)
+titanic_data <- titanic_data %>% mutate(Pclass_fct = factor(Pclass)) %>% select(-Pclass)
+
+glimpse(titanic_data)
+```
+
 ###Exercise #2
 
 Splitting data into training and test data sets (70/30)
@@ -56,11 +65,28 @@ titanic_test_set <- titanic_data %>% filter(!(PassengerId %in% titanic_train_set
 
 ###Exercise 3
 
+What kind of relationship will these features have with the probability of survival?
 
+Based on known history of Titanic, the evacuation prioroty was given to higher class passengers, women, and children. SO I would expect the probablity of survival to be higher for higher class passenger (the highest for 1st class), higher for women. The fare should be closely correlated with the class of the ticket; not sure it would add much to the model.
+
+Are these good features, given the problem we are trying to solve?
+Sex and Pclass are good feartures based on the statement above. Sex might nt be the best since it's higly correlated with Pclass. Age might be a good feature to add since priority was given to children as well and younger poeple had somewhat higher change of surviving in freezing waters
+
+```{r}
 # Fit a model with intercept only
-mod_1 <- glm(_______ ~ _____, data = _____, family = 'binomial')
+mod_1 <- glm(Survived_fct ~ Pclass_fct + Sex + Fare, data = titanic_train_set, family = 'binomial')
 
 # take a look at the features and coefficients
-tidy(____)
+tidy(mod_1)
+
+```
+Coefficient interpretation:
+ intercept: 2.18 log odds for Female, Passenger class 1 passengers to survive
+ The log odds of survival for a passenger in 2nd class, holding male and fare constant is 0.633 lower
+ The log odds of survival for a passenger in 3rd class, holding male and fare constant is 1.70 lower
+ The log odds of survival for a male passenger, holding passenger class and fare constant is 2.83 lower
+
+Are the features significant? Fare is not asignificant feature since it has a fairly high p-value of 0.337, higher than typical threshold of 0.05
+
 
 

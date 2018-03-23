@@ -254,6 +254,26 @@ glimpse(titanic_data)</code></pre>
 ## $ Fare        &lt;dbl&gt; 7.2500, 71.2833, 7.9250, 53.1000, 8.0500, 8.4583, ...
 ## $ Cabin       &lt;chr&gt; NA, &quot;C85&quot;, NA, &quot;C123&quot;, NA, NA, &quot;E46&quot;, NA, NA, NA, ...
 ## $ Embarked    &lt;chr&gt; &quot;S&quot;, &quot;C&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;Q&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;C&quot;, ...</code></pre>
+<pre class="r"><code>#Converst Survived to factor
+
+titanic_data &lt;- titanic_data %&gt;% mutate(Survived_fct = factor(Survived)) %&gt;% select(-Survived)
+titanic_data &lt;- titanic_data %&gt;% mutate(Pclass_fct = factor(Pclass)) %&gt;% select(-Pclass)
+
+glimpse(titanic_data)</code></pre>
+<pre><code>## Observations: 891
+## Variables: 12
+## $ PassengerId  &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15...
+## $ Name         &lt;chr&gt; &quot;Braund, Mr. Owen Harris&quot;, &quot;Cumings, Mrs. John Br...
+## $ Sex          &lt;chr&gt; &quot;male&quot;, &quot;female&quot;, &quot;female&quot;, &quot;female&quot;, &quot;male&quot;, &quot;ma...
+## $ Age          &lt;dbl&gt; 22, 38, 26, 35, 35, NA, 54, 2, 27, 14, 4, 58, 20,...
+## $ SibSp        &lt;int&gt; 1, 1, 0, 1, 0, 0, 0, 3, 0, 1, 1, 0, 0, 1, 0, 0, 4...
+## $ Parch        &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 1, 0, 0, 5, 0, 0, 1...
+## $ Ticket       &lt;chr&gt; &quot;A/5 21171&quot;, &quot;PC 17599&quot;, &quot;STON/O2. 3101282&quot;, &quot;113...
+## $ Fare         &lt;dbl&gt; 7.2500, 71.2833, 7.9250, 53.1000, 8.0500, 8.4583,...
+## $ Cabin        &lt;chr&gt; NA, &quot;C85&quot;, NA, &quot;C123&quot;, NA, NA, &quot;E46&quot;, NA, NA, NA,...
+## $ Embarked     &lt;chr&gt; &quot;S&quot;, &quot;C&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;Q&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;C&quot;,...
+## $ Survived_fct &lt;fct&gt; 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0...
+## $ Pclass_fct   &lt;fct&gt; 3, 1, 3, 1, 3, 3, 1, 3, 3, 2, 3, 1, 3, 3, 3, 2, 3...</code></pre>
 </div>
 <div id="exercise-2" class="section level3">
 <h3>Exercise #2</h3>
@@ -271,14 +291,22 @@ titanic_test_set &lt;- titanic_data %&gt;% filter(!(PassengerId %in% titanic_tra
 </div>
 <div id="exercise-3" class="section level3">
 <h3>Exercise 3</h3>
-</div>
-<div id="fit-a-model-with-intercept-only" class="section level1">
-<h1>Fit a model with intercept only</h1>
-<p>mod_1 &lt;- glm(_______ ~ _____, data = _____, family = ‘binomial’)</p>
-</div>
-<div id="take-a-look-at-the-features-and-coefficients" class="section level1">
-<h1>take a look at the features and coefficients</h1>
-<p>tidy(____)</p>
+<p>What kind of relationship will these features have with the probability of survival?</p>
+<p>Based on known history of Titanic, the evacuation prioroty was given to higher class passengers, women, and children. SO I would expect the probablity of survival to be higher for higher class passenger (the highest for 1st class), higher for women. The fare should be closely correlated with the class of the ticket; not sure it would add much to the model.</p>
+<p>Are these good features, given the problem we are trying to solve? Sex and Pclass are good feartures based on the statement above. Sex might nt be the best since it’s higly correlated with Pclass. Age might be a good feature to add since priority was given to children as well and younger poeple had somewhat higher change of surviving in freezing waters</p>
+<pre class="r"><code># Fit a model with intercept only
+mod_1 &lt;- glm(Survived_fct ~ Pclass_fct + Sex + Fare, data = titanic_train_set, family = 'binomial')
+
+# take a look at the features and coefficients
+tidy(mod_1)</code></pre>
+<pre><code>##          term     estimate   std.error   statistic      p.value
+## 1 (Intercept)  2.184273582 0.328033129   6.6586981 2.762637e-11
+## 2 Pclass_fct2 -0.633237694 0.321525515  -1.9694788 4.889813e-02
+## 3 Pclass_fct3 -1.701756611 0.298007147  -5.7104557 1.126741e-08
+## 4     Sexmale -2.834542001 0.229213455 -12.3663857 3.973000e-35
+## 5        Fare  0.002266955 0.002360593   0.9603331 3.368876e-01</code></pre>
+<p>Coefficient interpretation: intercept: 2.18 log odds for Female, Passenger class 1 passengers to survive The log odds of survival for a passenger in 2nd class, holding male and fare constant is 0.633 lower The log odds of survival for a passenger in 3rd class, holding male and fare constant is 1.70 lower The log odds of survival for a male passenger, holding passenger class and fare constant is 2.83 lower</p>
+<p>Are the features significant? Fare is not asignificant feature since it has a fairly high p-value of 0.337, higher than typical threshold of 0.05</p>
 </div>
 
 
