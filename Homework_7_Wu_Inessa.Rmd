@@ -130,14 +130,14 @@ Calculate RMSE from applying regression model to test set
 ```{r}
 test_predictions <- predict(mod_train_regr, newdata = test_set)
 
-rmse <- sqrt(mean(test_set$SalePrice - test_predictions)^2)
+rmse <- sqrt(mean((test_set$SalePrice - test_predictions)^2))
 print(rmse)
 ```
 Calculate RMSE from applying mean model to test set
 ```{r}
 test_predictions <- predict(mod_0, newdata = test_set)
 
-rmse <- sqrt(mean(test_set$SalePrice - test_predictions)^2)
+rmse <- sqrt(mean((test_set$SalePrice - test_predictions)^2))
 print(rmse)
 ```
 RMSE from mean model is smaller than RMSE from the regression model, implying overfitting of train data. Regression model has too much bias and, therefore, is not appropriate in this case.
@@ -158,7 +158,7 @@ Calculate RMSE from applying regression model to test set
 ```{r}
 test_predictions <- predict(mod_train_regr_b, newdata = test_set)
 
-rmse <- sqrt(mean(test_set$SalePrice - test_predictions)^2)
+rmse <- sqrt(mean((test_set$SalePrice - test_predictions)^2))
 print(rmse)
 ```
 Yeah!!!!! Kitchen quality matters - including Lot Area and Kitchen Quality explains 80% of variablity and produces 2208 (much smaller than mean) RMSE
