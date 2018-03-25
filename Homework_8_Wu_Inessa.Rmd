@@ -88,5 +88,84 @@ Coefficient interpretation:
 
 Are the features significant? Fare is not asignificant feature since it has a fairly high p-value of 0.337, higher than typical threshold of 0.05
 
+###Exercise 4
 
+```{r}
+tree_mod <- rpart(Survived_fct ~ Pclass_fct + Sex + Fare, data = titanic_train_set)
+
+plot(as.party(tree_mod))
+```
+
+Describing one path a Titanic passenger:
+
+A male passenger had on average a low probability of survival. The only passenger segment that had even lower probability of survival were female passengers who had 3rd class ticket and paid less that more than 23.7 for their fare
+
+The surprising output of the tree is that it does not seem to differentiate probablity of survival for male passengers regardless of class of ticket and fare paid. Also it is surprising that female passengers, traveling 3rd class, paying higher fare had lower probability or survival that females other females traveling the same class but paying lower fares. The only possible explanation is that the damage to the ship happened in the area where higher priced 3rd class cabins where and those portions on the ship were sealed off first.
+
+###Exercise 5
+
+```{r}
+#Evaluate both the logistic regression model and classification tree on the titanic_test_set
+test_logit <- predict(mod_1, newdata = titanic_test_set, type = 'response')
+test_tree <- predict(tree_mod, newdata = titanic_test_set)[,2]
+```
+
+(a) Plot the ROC curves from both models
+
+```{r}
+# create the prediction objects for both models
+pred_logit <- prediction(predictions = test_logit, labels = titanic_test_set$Survived_fct)
+pred_tree <- prediction(predictions = test_tree, labels = titanic_test_set$Survived_fct)
+
+# get the FPR and TPR for the logistic model
+# recall that the ROC curve plots the FPR on the x-axis
+perf_logit <- performance(pred_logit, measure = 'tpr', x.measure = 'fpr')
+perf_logit_tbl <- tibble(perf_logit@x.values[[1]], perf_logit@y.values[[1]])
+
+# Change the names of the columns of the tibble
+names(perf_logit_tbl) <- c('fpr', 'tpr')
+
+# get the FPR and TPR for the tree model
+perf_tree <- performance(pred_tree, measure = 'tpr', x.measure = 'fpr')
+perf_tree_tbl <- tibble(perf_tree@x.values[[1]], perf_tree@y.values[[1]])
+
+# Change the names of the columns of the tibble
+names(perf_tree_tbl) <- c('fpr', 'tpr')
+
+# Plotting function for plotting a nice ROC curve using ggplot
+plot_roc <- function(perf_tbl) {
+  p <- ggplot(data = perf_tbl, aes(x = fpr, y = tpr)) +
+  geom_line(color = 'blue') +
+  geom_abline(intercept = 0, slope = 1, lty = 3) +
+  labs(x = 'False positive rate', y = 'True positive rate') +
+  theme_bw()
+  return(p)
+}
+
+# Create the ROC curves using the function we created above
+plot_roc(perf_logit_tbl)
+plot_roc(perf_tree_tbl)
+```
+
+(b) Calculate the area under the curve (AUC) for both ROC curves
+
+```{r}
+# calculate the AUC
+auc_logit <- performance(pred_logit, measure = "auc")
+auc_tree <- performance(pred_tree, measure = "auc")
+
+# extract the AUC value
+auc_logit@y.values[[1]]
+auc_tree@y.values[[1]]
+```
+
+Both models have higher than 50% AUC which indicates prediction better than random. AUC for logistic regression model is better than the one for the diecision tree. However, the rate of false positive increases much faster for the logistics regression model.
+
+
+matrix_logit <- titanic_test_set %>% mutate(preds_prob = pred_logit[, 2]) %>% 
+  mutate(preds_cat = case_when(preds_prob < .25 ~ 'No',
+                               preds_prob >= .25 ~ 'Yes'))
+matrix_logit %>% count(preds_cat)
+
+  
 
