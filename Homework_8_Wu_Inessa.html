@@ -322,7 +322,10 @@ plot(as.party(tree_mod))</code></pre>
 <h3>Exercise 5</h3>
 <pre class="r"><code>#Evaluate both the logistic regression model and classification tree on the titanic_test_set
 test_logit &lt;- predict(mod_1, newdata = titanic_test_set, type = 'response')
-test_tree &lt;- predict(tree_mod, newdata = titanic_test_set)[,2]</code></pre>
+test_tree &lt;- predict(tree_mod, newdata = titanic_test_set)[,2]
+head(test_tree)</code></pre>
+<pre><code>##         1         2         3         4         5         6 
+## 0.1776156 0.9666667 0.1776156 0.9666667 0.7500000 0.3703704</code></pre>
 <ol style="list-style-type: lower-alpha">
 <li>Plot the ROC curves from both models</li>
 </ol>
@@ -373,7 +376,44 @@ auc_logit@y.values[[1]]</code></pre>
 <pre class="r"><code>auc_tree@y.values[[1]]</code></pre>
 <pre><code>## [1] 0.776602</code></pre>
 <p>Both models have higher than 50% AUC which indicates prediction better than random. AUC for logistic regression model is better than the one for the diecision tree. However, the rate of false positive increases much faster for the logistics regression model.</p>
-<p>matrix_logit &lt;- titanic_test_set %&gt;% mutate(preds_prob = pred_logit[, 2]) %&gt;% mutate(preds_cat = case_when(preds_prob &lt; .25 ~ ‘No’, preds_prob &gt;= .25 ~ ‘Yes’)) matrix_logit %&gt;% count(preds_cat)</p>
+<pre class="r"><code>#Adding a column with the predicted survival (Y/N) - logistics regression model
+
+titanic_logit &lt;- titanic_test_set %&gt;% mutate(preds_prob_log = test_logit) %&gt;% 
+  mutate(preds_cat = case_when(preds_prob_log &lt; .25 ~ 'No',
+                               preds_prob_log &gt;= .25 ~ 'Yes'))
+titanic_logit %&gt;% count(preds_cat)</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   preds_cat     n
+##   &lt;chr&gt;     &lt;int&gt;
+## 1 No          133
+## 2 Yes         134</code></pre>
+<pre class="r"><code>#create confusion matrix - logistic regression model
+
+titanic_logit %&gt;% count(preds_cat, Survived_fct) %&gt;% spread(Survived_fct, n)</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   preds_cat   `0`   `1`
+##   &lt;chr&gt;     &lt;int&gt; &lt;int&gt;
+## 1 No          112    21
+## 2 Yes          50    84</code></pre>
+<pre class="r"><code>#Adding a column with the predicted survival (Y/N) - decision tree model
+
+titanic_tree &lt;- titanic_test_set %&gt;% mutate(preds_prob_tree = test_tree) %&gt;% 
+  mutate(preds_cat = case_when(preds_prob_tree &lt; .25 ~ 'No',
+                               preds_prob_tree &gt;= .25 ~ 'Yes'))
+titanic_tree %&gt;% count(preds_cat)</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   preds_cat     n
+##   &lt;chr&gt;     &lt;int&gt;
+## 1 No          175
+## 2 Yes          92</code></pre>
+<pre class="r"><code>#create confusion matrix - decision tree model
+
+titanic_tree %&gt;% count(preds_cat, Survived_fct) %&gt;% spread(Survived_fct, n)</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   preds_cat   `0`   `1`
+##   &lt;chr&gt;     &lt;int&gt; &lt;int&gt;
+## 1 No          138    37
+## 2 Yes          24    68</code></pre>
 </div>
 
 

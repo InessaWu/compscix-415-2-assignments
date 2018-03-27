@@ -108,6 +108,7 @@ The surprising output of the tree is that it does not seem to differentiate prob
 #Evaluate both the logistic regression model and classification tree on the titanic_test_set
 test_logit <- predict(mod_1, newdata = titanic_test_set, type = 'response')
 test_tree <- predict(tree_mod, newdata = titanic_test_set)[,2]
+head(test_tree)
 ```
 
 (a) Plot the ROC curves from both models
@@ -161,11 +162,36 @@ auc_tree@y.values[[1]]
 
 Both models have higher than 50% AUC which indicates prediction better than random. AUC for logistic regression model is better than the one for the diecision tree. However, the rate of false positive increases much faster for the logistics regression model.
 
+```{r}
+#Adding a column with the predicted survival (Y/N) - logistics regression model
 
-matrix_logit <- titanic_test_set %>% mutate(preds_prob = pred_logit[, 2]) %>% 
-  mutate(preds_cat = case_when(preds_prob < .25 ~ 'No',
-                               preds_prob >= .25 ~ 'Yes'))
-matrix_logit %>% count(preds_cat)
+titanic_logit <- titanic_test_set %>% mutate(preds_prob_log = test_logit) %>% 
+  mutate(preds_cat = case_when(preds_prob_log < .25 ~ 'No',
+                               preds_prob_log >= .25 ~ 'Yes'))
+titanic_logit %>% count(preds_cat)
+```
 
-  
+```{r}
+#create confusion matrix - logistic regression model
+
+titanic_logit %>% count(preds_cat, Survived_fct) %>% spread(Survived_fct, n)
+```
+
+```{r}
+#Adding a column with the predicted survival (Y/N) - decision tree model
+
+titanic_tree <- titanic_test_set %>% mutate(preds_prob_tree = test_tree) %>% 
+  mutate(preds_cat = case_when(preds_prob_tree < .25 ~ 'No',
+                               preds_prob_tree >= .25 ~ 'Yes'))
+titanic_tree %>% count(preds_cat)
+```
+
+```{r}
+#create confusion matrix - decision tree model
+
+titanic_tree %>% count(preds_cat, Survived_fct) %>% spread(Survived_fct, n)
+```
+
+
+
 
