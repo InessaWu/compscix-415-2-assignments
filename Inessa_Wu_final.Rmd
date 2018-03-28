@@ -1,0 +1,15 @@
+---
+title: "COMPSCIX 415.2 Homework 9/Final"
+author: "Inessa Wu"
+date: "March 27, 2018"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 4
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
