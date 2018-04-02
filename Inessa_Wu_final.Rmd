@@ -13,3 +13,131 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r load_packages, warning=FALSE, message=FALSE}
+library (tidyverse)
+library (rmarkdown)
+library (mosaicData)
+library (lubridate)
+library(broom)
+library(rpart)
+library(partykit)
+library(ROCR)
+library(randomForest)
+library(modelr)
+```
+
+###Bootstrapping
+
+####Question 1.
+
+```{r message=FALSE}
+
+#Loading titanic file
+
+file_path <- 'C:/Users/ipodvorna/Documents/compscix-415-2-assignments/compscix-415-2-assignments/titanic.csv'
+titanic_data <- read_delim(file = file_path, delim = ",")
+
+glimpse(titanic_data)
+```
+
+
+```{r}
+#Convert all character columns into unordered factors and Survived column into an unordered factor
+
+titanic_data <- titanic_data %>% mutate(Survived = as.factor(Survived), 
+                                        Name = as.factor(Name), 
+                                        Sex = as.factor(Sex), 
+                                        Ticket = as.factor(Ticket), 
+                                        Cabin = as.factor(Cabin), 
+                                        Embarked = as.factor(Embarked), 
+                                        Pclass = as.factor(Pclass), 
+                                        SibSp = as.factor(SibSp), Parch = as.factor(Parch))
+
+#Take a glimpse of the data to confirm that all of the columns were converted correctly
+
+glimpse(titanic_data)
+```
+
+####Question 2.
+
+```{r}
+#Take 100 bootstrap samples of data
+
+titanic_boot <- bootstrap(data = titanic_data, n = 100)
+
+#Convert to tibble
+
+titanic_boot <- as.tibble(titanic_boot)
+
+#Confirm that the result is a tibble with a list column of resample objects - each resample object is a bootstrap sample of the titanic dataset
+
+head (titanic_boot)
+
+glimpse (titanic_boot$strap[[1]])
+```
+
+####Question 3.
+
+Output of the distinct count below confirms that bootstrap samples are in fact bootsrap since it varies from sample to sample which means that some of the rows in the bootstrap samples repeat (not unique)
+```{r}
+#Use n_distinct() from dplyr to confirm that some of the bootstrap samples are in fact bootstrap samples
+
+as.tibble(titanic_boot$strap[[1]]) %>% n_distinct()
+as.tibble(titanic_boot$strap[[2]]) %>% n_distinct()
+as.tibble(titanic_boot$strap[[3]]) %>% n_distinct()
+```
+
+####Question 4.
+
+```{r}
+age_mean <- function(titanic_boot) {
+  data <- as.tibble(titanic_boot) # convert input data set to a tibble
+  mean_age <- mean(data$Age, na.rm = TRUE) # take the mean of Age, remove NAs
+  return(mean_age) # return the mean value of Age from data
+}
+
+
+# loop through the 100 bootstrap samples and use the age_mean()
+# function
+all_means <- rep(NA, 100)
+
+# start the loop
+for(i in 1:100) {
+  all_means[i] <- age_mean(titanic_boot$strap[[i]])
+}
+
+# take a look at some of the means you calculated from your samples
+head(all_means)
+
+# convert to a tibble so we can use if for plotting
+all_means <- tibble(all_means = all_means)
+```
+
+```{r}
+#Plot histogram of all means
+
+ggplot(all_means)+
+  geom_histogram(mapping = aes(x=all_means), bins=10)
+```
+
+
+```{r}
+#Calculate standard error of bootstrap sample means
+
+all_means %>% summarize(sample_SE = sd(all_means))
+```
+
+```{r}
+titanic_data <- titanic_data %>% filter(!is.na(Age))
+theor_SE <- sd(titanic_data$Age)/sqrt(length(titanic_data$Age))
+
+print(theor_SE)
+```
+
+The standard deviation of sample means is 0.58 comparing to data set standard error of 0.54. These values are very close, in line with Central Limit theorem fundamentals.
+
+
+
+
+
+
