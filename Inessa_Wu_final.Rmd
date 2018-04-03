@@ -123,18 +123,121 @@ ggplot(all_means)+
 
 ```{r}
 #Calculate standard error of bootstrap sample means
-
 all_means %>% summarize(sample_SE = sd(all_means))
 ```
 
 ```{r}
-titanic_data <- titanic_data %>% filter(!is.na(Age))
-theor_SE <- sd(titanic_data$Age)/sqrt(length(titanic_data$Age))
+titanic_data1 <- titanic_data %>% filter(!is.na(Age))
+theor_SE <- sd(titanic_data1$Age)/sqrt(length(titanic_data1$Age))
 
 print(theor_SE)
 ```
 
-The standard deviation of sample means is 0.58 comparing to data set standard error of 0.54. These values are very close, in line with Central Limit theorem fundamentals.
+The standard deviation of sample means is 0.541 comparing to data set standard error of 0.544. These values are very close, in line with Central Limit theorem fundamentals.
+
+###Random forest
+
+####Question 1.
+
+```{r}
+#Randomly split data into training and testing data sets
+set.seed(987)
+
+titanic_model_data <- resample_partition(titanic_data, c(test = 0.3, train = 0.7))
+titanic_train_set <- as.tibble(titanic_model_data$train)
+titanic_test_set <- as.tibble(titanic_model_data$test)
+```
+
+####Question 2.
+
+Compared to last week's decision tree which only contained three features, the decision tree below has many more nodes. The first split remained the same - Sex. However, Age has been identified as one of the important node splits. For men now it's visible that children under 6.5 years of age had a much higher probaliity of survival.
+
+```{r}
+# Fit a decision tree to train_set Pclass, Sex, Age, SibSp, Parch,  Fare, Embarked as the features
+tree_mod <- rpart(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked, data = titanic_train_set)
+
+#Plot the tree using
+plot(as.party(tree_mod))
+```
+
+####Question 3.
+
+```{r}
+# Fit a random forest using Pclass, Sex, Age, SibSp,  Parch, Fare, Embarked as the features. Use 500 trees and sample four features at each split.
+rf_mod <- randomForest(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked,
+                         data = titanic_train_set, 
+                         ntrees = 500, 
+                         mtry = 4, 
+                         na.action = na.roughfix)
+```
+
+####Question 4.
+
+Random forest model performed better, with greater area under the curve - 0.81 for random forest comparing to 0.79 for decison tree.
+
+```{r}
+rf_preds <- predict(rf_mod, newdata = titanic_test_set, type = 'prob')[,2]
+tree_preds <- predict(tree_mod, newdata = titanic_test_set)[,2]
+
+pred_rf <- prediction(predictions = rf_preds, labels = titanic_test_set$Survived)
+pred_tree <- prediction(predictions = tree_preds, labels = titanic_test_set$Survived)
+
+# calculate the AUC
+auc_rf <- performance(pred_rf, measure = "auc")
+auc_tree <- performance(pred_tree, measure = "auc")
+```
+
+####Question 5.
+
+```{r}
+# get the FPR and TPR for the logistic model
+perf_rf <- performance(pred_rf, measure = 'tpr', x.measure = 'fpr')
+perf_rf_tbl <- tibble(perf_rf@x.values[[1]], perf_rf@y.values[[1]])
+
+# Change the names of the columns of the tibble
+names(perf_rf_tbl) <- c('fpr', 'tpr')
+
+# get the FPR and TPR for the tree model
+perf_tree <- performance(pred_tree, measure = 'tpr', x.measure = 'fpr')
+perf_tree_tbl <- tibble(perf_tree@x.values[[1]], perf_tree@y.values[[1]])
+
+# Change the names of the columns of the tibble
+names(perf_tree_tbl) <- c('fpr', 'tpr')
+
+combo_models <- bind_rows("Random forest" = perf_rf_tbl, "Decision tree" = perf_tree_tbl, .id = "models")
+
+# Plotting function for plotting a nice ROC curve using ggplot
+plot_roc <- function(perf_tbl) {
+  p <- ggplot(data = combo_models, aes(x = fpr, y = tpr, color = models)) +
+  geom_line() +
+  geom_abline(intercept = 0, slope = 1, lty = 3) +
+  labs(x = 'False positive rate', y = 'True positive rate') +
+  theme_bw()
+  return(p)
+}
+
+# Create the ROC curves using the function we created above
+plot_roc(combo_models)
+
+```
+
+####Question 6.
+
+Random forest model performs better than decision tree with the tradeoff between true positive and false positive and lower rate than the decision tree.
+
+At true positive rate of approximately 0.75, the approximate false positive rate for is as follows:
+for decision tree - roughly 0.33; for random forest - roughly 0.16
+
+
+
+
+
+
+
+
+
+
+
 
 
 
